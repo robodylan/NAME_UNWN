@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using SdlDotNet.Core;
 using SdlDotNet.Graphics;
 using SdlDotNet.Input;
+using System.Drawing;
+using NAME_UNWN.Drawable;
 
 namespace NAME_UNWN
 {
@@ -15,9 +17,15 @@ namespace NAME_UNWN
         public static int height = 600;
         public static Surface videoScreen;
         public static Direction direction;
+        public static List<Entity> entities;
+        public static Entity player;
         static void Main(string[] args)
         {
-            videoScreen = Video.SetVideoMode(width, height, false, false, false);
+            player = new Entity(0, 0, Entity.entityType.Player);
+            entities = new List<Entity>();
+            entities.Add(player);
+            direction = Direction.None;
+            videoScreen = Video.SetVideoMode(width, height, false, false, false, false, true);
             Events.Tick += Update;
             Events.Tick += displayDebugInfo;
             Events.KeyboardDown += KeyDown;
@@ -28,7 +36,13 @@ namespace NAME_UNWN
 
         public static void Update(object sender, TickEventArgs e)
         {
-              
+            videoScreen.Fill(Color.DarkSalmon);
+            foreach(Entity entity in entities)
+            {
+                entity.Update();
+                entity.Draw(videoScreen);
+            }
+            videoScreen.Update();
         }
 
         public static void Quit(object sender, QuitEventArgs e)

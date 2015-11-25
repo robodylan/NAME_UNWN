@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using SdlDotNet.Core;
 using SdlDotNet.Graphics;
+using SdlDotNet.Graphics.Primitives;
 using SdlDotNet.Input;
 using System.Drawing;
+using System.Windows;
 using NAME_UNWN.Drawable;
 
 namespace NAME_UNWN
@@ -17,31 +19,61 @@ namespace NAME_UNWN
         public static int height = 600;
         public static Surface videoScreen;
         public static Direction direction;
+        public static bool[] directionKeys = {false, false, false, false};
         public static List<Entity> entities;
-        public static Entity player;
+        public static List<Bullet> bullets;
+        public static List<Spray> sprays;
+        public static Point mousePosition;
+        public static bool mouseClicked;
         static void Main(string[] args)
         {
-            player = new Entity(0, 0, Entity.entityType.Player);
             entities = new List<Entity>();
-            entities.Add(player);
+            sprays = new List<Spray>();
+            bullets = new List<Bullet>();
+            Random r = new Random();
+            for(int i = 0; i < 10; i++)
+            {
+                entities.Add(new Entity(r.Next(0, 800), r.Next(0, 600), Entity.entityType.Student));
+            }
             direction = Direction.None;
             videoScreen = Video.SetVideoMode(width, height, false, false, false, false, true);
             Events.Tick += Update;
             Events.Tick += displayDebugInfo;
             Events.KeyboardDown += KeyDown;
             Events.KeyboardUp += KeyUp;
+            Events.MouseMotion += MouseMotion;
+            Events.MouseButtonDown += MouseButtonDown;
             Events.Quit += Quit;
+            Mouse.ShowCursor = false;
+
+            setupTmpLevel();
+
             Events.Run();
+        }
+
+        public static void MouseButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            mouseClicked = true;
+        }
+
+        public static void MouseMotion(object sender, MouseMotionEventArgs e)
+        {
+            mousePosition = new Point(e.X, e.Y);
         }
 
         public static void Update(object sender, TickEventArgs e)
         {
-            videoScreen.Fill(Color.DarkSalmon);
-            foreach(Entity entity in entities)
+            videoScreen.Fill(Color.DarkOliveGreen);
+            List<IDrawable> drawable = new List<IDrawable>();
+            drawable.AddRange(bullets);
+            drawable.AddRange(sprays);
+            drawable.AddRange(entities);
+            foreach (IDrawable entity in drawable)
             {
-                entity.Update();
+                entity.Update(directionKeys, mousePosition, mouseClicked);
                 entity.Draw(videoScreen);
             }
+            mouseClicked = false;
             videoScreen.Update();
         }
 
@@ -55,16 +87,16 @@ namespace NAME_UNWN
             switch(e.Key)
             {
                 case Key.W:
-                    direction = Direction.Up;
+                    directionKeys[0] = true;
                     break;
                 case Key.A:
-                    direction = Direction.Left;
+                    directionKeys[1] = true;
                     break;
                 case Key.S:
-                    direction = Direction.Down;
+                    directionKeys[2] = true;
                     break;
                 case Key.D:
-                    direction = Direction.Right;
+                    directionKeys[3] = true;
                     break;
             }
         }
@@ -74,36 +106,23 @@ namespace NAME_UNWN
             switch (e.Key)
             {
                 case Key.W:
-                    if(direction == Direction.Up)
-                    {
-                        direction = Direction.None;
-                    }
+                    directionKeys[0] = false;
                     break;
                 case Key.A:
-                    if (direction == Direction.Left)
-                    {
-                        direction = Direction.None;
-                    }
+                    directionKeys[1] = false;
                     break;
                 case Key.S:
-                    if (direction == Direction.Down)
-                    {
-                        direction = Direction.None;
-                    }
+                    directionKeys[2] = false;
                     break;
                 case Key.D:
-                    if (direction == Direction.Right)
-                    {
-                        direction = Direction.None;
-                    }
+                    directionKeys[3] = false;
                     break;
             }
         }
 
         public static void displayDebugInfo(object sender, TickEventArgs e)
         {
-            Console.Clear();
-            Console.WriteLine("Current Direction: " + direction);
+
         }
 
         public enum Direction
@@ -113,6 +132,28 @@ namespace NAME_UNWN
             Right,
             Left,
             None
+        }
+
+        public static void shotsFired(int x, int y, Entity shooter)
+        {
+            Point originOfShot = shooter.position;
+            Point DestinationOfShot = new Point(x,y);
+            foreach (Entity e in entities)
+            {
+                int dX = (e.position.X + 16)- x;
+                int dY = (e.position.Y + 16) - y;
+                if (dX * dX + dY * dY < (32 * 32) && e.type != Entity.entityType.Player)
+                {
+                    e.health -= new Random().Next(25, 100);
+                }
+            }
+        }
+
+        public static void setupTmpLevel()
+        {
+            entities.Add(new Entity(0, 0, Entity.entityType.Player));
+            sprays.Add(new Spray(0, 0, Spray.sprayType.blood));
+            bullets.Add(new Bullet(0, 0, 90));
         }
     }
 }

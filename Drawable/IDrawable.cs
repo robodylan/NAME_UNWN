@@ -10,10 +10,10 @@ namespace NAME_UNWN.Drawable
 {
     interface IDrawable
     {
-        Surface entityTexture { get; set; }
-        Surface weaponTexture { get; set; }
+        Surface spriteTexture { get; set; }
         Point position { get; set; }
-        void Update();
+        float rotation { get; set; }
+        void Update(bool[] directionKeys, Point mousePosition, bool mouseClicked);
         void Draw(Surface renderTarget);
     }
 }

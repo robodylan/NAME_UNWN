@@ -13,7 +13,7 @@ namespace NAME_UNWN.Drawable
         Surface spriteTexture { get; set; }
         Point position { get; set; }
         float rotation { get; set; }
-        void Update(bool[] directionKeys, Point mousePosition, bool mouseClicked);
+        void Update(bool[] directionKeys, List<Entity> entities, Point mousePosition, bool mouseClicked);
         void Draw(Surface renderTarget);
     }
 }

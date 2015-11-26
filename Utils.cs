@@ -9,7 +9,8 @@ namespace NAME_UNWN
 {
     class Utils
     {
-
+        //Code thanks to David Gouveia on Stack Exchange
+        //http://gamedev.stackexchange.com/questions/26004/how-to-detect-2d-line-on-line-collision
         bool IsIntersecting(Point a, Point b, Point c, Point d)
         {
             float denominator = ((b.X - a.X) * (d.Y - c.Y)) - ((b.Y - a.Y) * (d.X - c.X));

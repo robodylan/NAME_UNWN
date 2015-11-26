@@ -13,10 +13,12 @@ namespace NAME_UNWN.Drawable
         public Surface spriteTexture { get; set; }
         public Point position { get; set; }
         public float rotation { get; set; }
+        public static Random sprayRandom = new Random();
         public sprayType type;
 
         public Spray(int x, int y, sprayType type)
         {
+            this.rotation = sprayRandom.Next(0, 360);
             this.position = new Point(x,y);
             this.type = type;
             switch(type)
@@ -34,10 +36,10 @@ namespace NAME_UNWN.Drawable
 
         public void Draw(Surface renderTarget)
         {
-            renderTarget.Blit(spriteTexture, position);
+            renderTarget.Blit(spriteTexture.CreateRotatedSurface((int)rotation), position);
         }
 
-        public void Update(bool[] directionKeys, Point mousePosition, bool mouseClicked)
+        public void Update(bool[] directionKeys, List<Entity> entities, Point mousePosition, bool mouseClicked)
         {
            
         }

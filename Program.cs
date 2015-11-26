@@ -15,8 +15,8 @@ namespace NAME_UNWN
 {
     class Program
     {
-        public static int width = 800;
-        public static int height = 600;
+        public static int width = 1366;
+        public static int height = 768;
         public static Surface videoScreen;
         public static Direction direction;
         public static bool[] directionKeys = {false, false, false, false};
@@ -25,15 +25,16 @@ namespace NAME_UNWN
         public static List<Spray> sprays;
         public static Point mousePosition;
         public static bool mouseClicked;
+        public static Random r = new Random();
+        public static Point 
         static void Main(string[] args)
         {
             entities = new List<Entity>();
             sprays = new List<Spray>();
             bullets = new List<Bullet>();
-            Random r = new Random();
-            for(int i = 0; i < 10; i++)
+            for(int i = 0; i < 100; i++)
             {
-                entities.Add(new Entity(r.Next(0, 800), r.Next(0, 600), Entity.entityType.Student));
+                entities.Add(new Entity(r.Next(0, width), r.Next(0, height), Entity.entityType.Student));
             }
             direction = Direction.None;
             videoScreen = Video.SetVideoMode(width, height, false, false, false, false, true);
@@ -44,6 +45,7 @@ namespace NAME_UNWN
             Events.MouseMotion += MouseMotion;
             Events.MouseButtonDown += MouseButtonDown;
             Events.Quit += Quit;
+            Events.TargetFps = 144;
             Mouse.ShowCursor = false;
 
             setupTmpLevel();
@@ -70,9 +72,13 @@ namespace NAME_UNWN
             drawable.AddRange(entities);
             foreach (IDrawable entity in drawable)
             {
-                entity.Update(directionKeys, mousePosition, mouseClicked);
+                entity.Update(directionKeys, entities, mousePosition, mouseClicked);
                 entity.Draw(videoScreen);
             }
+            //Begin debug draw
+            Circle c = new Circle(mousePosition, 8);
+            c.Draw(videoScreen, Color.Red, true, false);
+            c.Draw(videoScreen, Color.FromArgb(32, 255, 0, 0), true, true);
             mouseClicked = false;
             videoScreen.Update();
         }
@@ -153,7 +159,6 @@ namespace NAME_UNWN
         {
             entities.Add(new Entity(0, 0, Entity.entityType.Player));
             sprays.Add(new Spray(0, 0, Spray.sprayType.blood));
-            bullets.Add(new Bullet(0, 0, 90));
         }
     }
 }

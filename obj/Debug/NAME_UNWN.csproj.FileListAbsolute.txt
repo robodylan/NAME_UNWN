@@ -10,4 +10,12 @@ C:\Users\Dylan\Documents\GitHub\NAME_UNWN\obj\Debug\NAME_UNWN.pdb
 C:\Users\Dylan\Documents\GitHub\NAME_UNWN\bin\Debug\NAME_UNWN.exe
 C:\Users\Dylan\Documents\GitHub\NAME_UNWN\bin\Debug\NAME_UNWN.pdb
 C:\Users\Dylan\Documents\GitHub\NAME_UNWN\obj\Debug\NAME_UNWN.csprojResolveAssemblyReference.cache
-C:\Users\Dylan\Documents\GitHub\NAME_UNWN\bin\Debug\Resources\entityTexture.bmp
+C:\Users\Dylan\Documents\GitHub\NAME_UNWN\bin\Debug\Resources\entityTexture.png
+C:\Users\Dylan\Documents\GitHub\NAME_UNWN\bin\Debug\SdlDotNet.dll
+C:\Users\Dylan\Documents\GitHub\NAME_UNWN\bin\Debug\Tao.Sdl.dll
+C:\Users\Dylan\Documents\GitHub\NAME_UNWN\bin\Debug\SdlDotNet.xml
+C:\Users\Dylan\Documents\GitHub\NAME_UNWN\bin\Debug\Tao.Sdl.xml
+C:\Users\Dylan\Documents\GitHub\NAME_UNWN\bin\Debug\Resources\studentTexture.png
+C:\Users\Dylan\Documents\GitHub\NAME_UNWN\bin\Debug\Resources\bloodTexture.png
+C:\Users\Dylan\Documents\GitHub\NAME_UNWN\bin\Debug\Resources\bulletTexture.png
+C:\Users\Dylan\Documents\GitHub\NAME_UNWN\bin\Debug\Resources\teacherTexture.png

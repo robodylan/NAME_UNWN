@@ -11,9 +11,9 @@ namespace NAME_UNWN.Drawable
 {
     class Entity : IDrawable
     {
-        public static Surface playerTexture = new Surface("Resources/entityTexture.png");
-        public static Surface teacherTexture = new Surface("Resources/teacherTexture.png");
-        public static Surface studentTexture = new Surface("Resources/studentTexture.png");
+        public static Surface playerTexture = new Surface("Resources/images/entityTexture.png");
+        public static Surface teacherTexture = new Surface("Resources/images/teacherTexture.png");
+        public static Surface studentTexture = new Surface("Resources/images/studentTexture.png");
         public Surface spriteTexture { get; set; }
         public Surface weaponTexture { get; set; }
         public Point position { get; set; }
@@ -48,7 +48,7 @@ namespace NAME_UNWN.Drawable
 
         public void Update(bool[] directionKeys, List<Entity> entities, Point mousePosition, bool mouseClicked)
         {
-            if(mouseClicked && type == entityType.Player && timeSinceClick > 60)  
+            if(mouseClicked && type == entityType.Player && timeSinceClick > (144 / 3))
             {
                 timeSinceClick = 0;
                 Program.bullets.Add(new Bullet(position.X, position.Y, rotation - 90, this));
@@ -59,11 +59,12 @@ namespace NAME_UNWN.Drawable
             }
             int xToMove = 0;
             int yToMove = 0;
+            int speed = 4;
             switch (this.type)
             {
                 case entityType.Player:
-                    rotation = 90 + (int)(57 * (float)(Math.Atan2((Program.mousePosition.Y - position.Y - 15), (Program.mousePosition.X - position.X - 15))));
-                    int speed = 4;
+                    Program.offset = new Point(position.X - (Program.width / 2), position.Y - (Program.height / 2));
+                    rotation = 90 + (int)(57 * (float)(Math.Atan2(((Program.mousePosition.Y + Program.offset.Y) - position.Y - 16), ((Program.mousePosition.X + Program.offset.X) - position.X - 16))));
                     if (directionKeys[0])
                     {
                         yToMove -= speed;
@@ -82,8 +83,24 @@ namespace NAME_UNWN.Drawable
                     }
                     break;
                 case entityType.Student:
-                    xToMove += Program.r.Next(-1,2);
-                    yToMove += Program.r.Next(-1,2);
+                    Point toFollow = new Point(123456789,0);
+                    int shortestDistance = 1000000;
+                    foreach(Point p in Program.normalPath)
+                    {
+                        int distance = (p.X - position.X * p.X - position.X) + (p.Y - position.Y * p.Y - position.Y);
+                        if(distance < shortestDistance && distance < 100)
+                        {
+                            shortestDistance = distance;
+                            toFollow = p;
+                        }
+                    }
+                    if(toFollow.X != 123456789)
+                    {
+                        if (position.X < toFollow.X) xToMove += Program.r.Next(0, 4);
+                        if (position.X > toFollow.X) xToMove -= Program.r.Next(0, 4); 
+                        if (position.Y < toFollow.Y) yToMove += Program.r.Next(0, 4); 
+                        if (position.Y > toFollow.Y) yToMove -= Program.r.Next(0, 4);
+                    }
                     break;
             }
             position = new Point(position.X + xToMove, position.Y + yToMove);
@@ -95,7 +112,7 @@ namespace NAME_UNWN.Drawable
 
         public void Draw(Surface renderTarget)
         {
-            renderTarget.Blit(spriteTexture.CreateRotatedSurface((int)-rotation, true), position);
+            renderTarget.Blit(spriteTexture.CreateRotatedSurface((int)-rotation, true), new Point(position.X - Program.offset.X, position.Y - Program.offset.Y));
         }
 
         public enum entityType

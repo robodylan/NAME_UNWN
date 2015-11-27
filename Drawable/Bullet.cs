@@ -14,6 +14,7 @@ namespace NAME_UNWN.Drawable
         public Point position { get; set; }
         public float rotation { get; set; }
         public Entity shooter;
+        public int time;
 
         public Bullet(int x, int y, float rotationInDegrees, Entity shooter)
         {
@@ -23,16 +24,21 @@ namespace NAME_UNWN.Drawable
             this.position = new Point(x + (int)XtoMove,y + (int)YtoMove);
             this.rotation = rotationInDegrees;
             this.shooter = shooter;
-            this.spriteTexture = new Surface("Resources/bulletTexture.png");
+            this.spriteTexture = new Surface("Resources/images/bulletTexture.png");
         }
 
         public void Draw(Surface renderTarget)
         {
-            renderTarget.Blit(spriteTexture.CreateRotatedZoomedSurface((int)-rotation + 45, 1, true), position);
+            renderTarget.Blit(spriteTexture.CreateRotatedZoomedSurface((int)-rotation + 45, 1, true), new Point(position.X - Program.offset.X, position.Y - Program.offset.Y));
         }
 
         public void Update(bool[] directionKeys, List<Entity> entities,Point mousePosition, bool mouseClicked)
         {
+            time++;
+            if(time > 1000)
+            {
+                Program.bullets.Remove(this);
+            }
             foreach(Entity entity in entities)
             {
                 int dX = entity.position.X - position.X;
@@ -40,7 +46,7 @@ namespace NAME_UNWN.Drawable
                 if (dX * dX + dY * dY < (32 * 32) && !entity.Equals(shooter))
                 {
                     Program.bullets.Remove(this);
-                    entity.health -= new Random().Next(50, 100); //Needs revision
+                    entity.health -= new Random().Next(50, 150); //Needs revision
                 }
             }
             float speed = 16;

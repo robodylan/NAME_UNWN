@@ -10,6 +10,7 @@ using SdlDotNet.Input;
 using System.Drawing;
 using System.Windows;
 using NAME_UNWN.Drawable;
+using NAME_UNWN.Path;
 
 namespace NAME_UNWN
 {
@@ -23,18 +24,24 @@ namespace NAME_UNWN
         public static List<Entity> entities;
         public static List<Bullet> bullets;
         public static List<Spray> sprays;
+        public static List<NormalPath> normalPath;
+        public static List<Explosive> explosives;
+        public static List<Entity> toKill;
         public static Point mousePosition;
         public static bool mouseClicked;
         public static Random r = new Random();
-        public static Point 
+        public static Point offset = new Point();
         static void Main(string[] args)
         {
             entities = new List<Entity>();
+            toKill = new List<Entity>();
             sprays = new List<Spray>();
             bullets = new List<Bullet>();
+            normalPath = new List<NormalPath>();
+            explosives = new List<Explosive>();
             for(int i = 0; i < 100; i++)
             {
-                entities.Add(new Entity(r.Next(0, width), r.Next(0, height), Entity.entityType.Student));
+                entities.Add(new Entity((r.Next(0, width) / 32) * 32, (r.Next(0, height) / 32) * 32, Entity.entityType.Student));
             }
             direction = Direction.None;
             videoScreen = Video.SetVideoMode(width, height, false, false, false, false, true);
@@ -55,7 +62,14 @@ namespace NAME_UNWN
 
         public static void MouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            mouseClicked = true;
+            if (e.Button == MouseButton.PrimaryButton)
+            {
+                mouseClicked = true;
+            }
+            if (e.Button == MouseButton.SecondaryButton)
+            {
+                normalPath.Add(new Point(mousePosition.X + offset.X, mousePosition.Y + offset.Y));
+            }
         }
 
         public static void MouseMotion(object sender, MouseMotionEventArgs e)
@@ -65,10 +79,15 @@ namespace NAME_UNWN
 
         public static void Update(object sender, TickEventArgs e)
         {
+            foreach(Entity kills in toKill)
+            {
+                entities.Remove(kills);
+            }
             videoScreen.Fill(Color.DarkOliveGreen);
             List<IDrawable> drawable = new List<IDrawable>();
             drawable.AddRange(bullets);
             drawable.AddRange(sprays);
+            drawable.AddRange(explosives);
             drawable.AddRange(entities);
             foreach (IDrawable entity in drawable)
             {
@@ -80,6 +99,12 @@ namespace NAME_UNWN
             c.Draw(videoScreen, Color.Red, true, false);
             c.Draw(videoScreen, Color.FromArgb(32, 255, 0, 0), true, true);
             mouseClicked = false;
+            foreach(Point p in normalPath)
+            {
+                c.Center = new Point(p.X - offset.X, p.Y - offset.Y);
+                c.Draw(videoScreen, Color.Blue, true, false);
+                c.Draw(videoScreen, Color.FromArgb(32, 128, 128, 0), true, true);
+            }
             videoScreen.Update();
         }
 
@@ -90,6 +115,10 @@ namespace NAME_UNWN
 
         public static void KeyDown(object sender, KeyboardEventArgs e)
         {
+            if(e.Key == Key.LeftShift)
+            {
+                explosives.Add(new Explosive(mousePosition.X, mousePosition.Y, Explosive.explosiveType.bomb));
+            }
             switch(e.Key)
             {
                 case Key.W:

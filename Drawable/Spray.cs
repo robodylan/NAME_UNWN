@@ -24,11 +24,14 @@ namespace NAME_UNWN.Drawable
             switch(type)
             {
                 case sprayType.blood:
-                    spriteTexture = new Surface("Resources/bloodTexture.png");
+                    spriteTexture = new Surface("Resources/images/bloodTexture.png");
                     break;
                 case sprayType.bullet:
                     break;
                 case sprayType.fire:
+                    break;
+                case sprayType.explosion:
+                    spriteTexture = new Surface("Resources/images/explosionTexture.png");
                     break;
 
             }
@@ -36,7 +39,7 @@ namespace NAME_UNWN.Drawable
 
         public void Draw(Surface renderTarget)
         {
-            renderTarget.Blit(spriteTexture.CreateRotatedSurface((int)rotation), position);
+            renderTarget.Blit(spriteTexture.CreateRotatedSurface((int)rotation), new Point(position.X - Program.offset.X, position.Y - Program.offset.Y));
         }
 
         public void Update(bool[] directionKeys, List<Entity> entities, Point mousePosition, bool mouseClicked)
@@ -48,7 +51,8 @@ namespace NAME_UNWN.Drawable
         {
             bullet,
             blood,
-            fire
+            fire,
+            explosion
         }
     }
 }
